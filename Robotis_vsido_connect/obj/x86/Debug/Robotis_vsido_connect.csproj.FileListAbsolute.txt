@@ -1,0 +1,7 @@
+c:\users\user\documents\visual studio 2010\Projects\Robotis_vsido_connect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.Properties.Resources.resources
+c:\users\user\documents\visual studio 2010\Projects\Robotis_vsido_connect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.csproj.GenerateResource.Cache
+c:\users\user\documents\visual studio 2010\Projects\Robotis_vsido_connect\Robotis_vsido_connect\bin\Debug\Robotis_vsido_connect.exe
+c:\users\user\documents\visual studio 2010\Projects\Robotis_vsido_connect\Robotis_vsido_connect\bin\Debug\Robotis_vsido_connect.pdb
+c:\users\user\documents\visual studio 2010\Projects\Robotis_vsido_connect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.exe
+c:\users\user\documents\visual studio 2010\Projects\Robotis_vsido_connect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.pdb
+C:\Users\USER\documents\visual studio 2010\Projects\Robotis_vsido_connect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.Form1.resources
