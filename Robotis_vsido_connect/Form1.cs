@@ -25,7 +25,7 @@ namespace Robotis_vsido_connect
         Thread TcpReadThread = null;
         Thread MotionThread = null;
         NetworkStream ns = null;
-        string ipOrHost = "localhost";
+        string ipOrHost = "127.0.0.1";
         //	string ipOrHost = "192.168.1.8";
         //	string ipOrHost = "127.0.0.1";
 
@@ -41,10 +41,10 @@ namespace Robotis_vsido_connect
 /// <summary>
 /// モーションファイル(.csv)の絶対パス指定
 /// </summary>
-        string motion1file = "";
-        string motion2file = "";
-        string motion3file = "";
-        string motion4file = "";
+        string motion1file = @"C:\Users\USER\Desktop\left_hand_up.csv";
+        string motion2file = @"C:\Users\USER\Desktop\hand_test_fast.csv";
+        string motion3file = @"C:\Users\USER\Desktop\command.csv";
+        string motion4file = @"C:\Users\USER\Desktop\test.csv";
 
 
         bool isAction = false;
@@ -73,15 +73,16 @@ namespace Robotis_vsido_connect
             comb.Items.Add("COM12");
             comb.Items.Add("COM13");
             comb.Items.Add("COM14");
+            comb.Items.Add("COM16");
             comb.SelectedIndex = 0;
 
             CurrentDir = System.IO.Directory.GetCurrentDirectory();
 
             this.Text = "serial";
-            textBox1.Text = motion1file;
-            textBox2.Text = motion2file;
-            textBox3.Text = motion3file;
-            textBox4.Text = motion4file;
+            textBox1.Text = Path.GetFileName(motion1file);
+            textBox2.Text = Path.GetFileName(motion2file);
+            textBox3.Text = Path.GetFileName(motion3file);
+            textBox4.Text = Path.GetFileName(motion4file);
 
             test = new Thread(FileAnalyze);
             test.IsBackground = true;
@@ -108,6 +109,7 @@ namespace Robotis_vsido_connect
             try
             {
                 serialport.Open();
+                label13.Text = "status: 接続";
             }
             catch
             {
@@ -136,12 +138,15 @@ namespace Robotis_vsido_connect
         private void button2_Click(object sender, EventArgs e)
         {
             serialport.Close();
+            label13.Text = "status: 未接続";
         }
 
         //受信開始ボタン
         private void button3_Click(object sender, EventArgs e)
         {
+            try{
             tcp = new System.Net.Sockets.TcpClient(ipOrHost, port);
+            label8.Text = "Client:" + ipOrHost + " :" + port; 
             ns = tcp.GetStream();
             ns.ReadTimeout = Timeout.Infinite;
             ns.WriteTimeout = Timeout.Infinite;
@@ -155,6 +160,9 @@ namespace Robotis_vsido_connect
             MotionThread.IsBackground = true;
             MotionThread.Priority = System.Threading.ThreadPriority.BelowNormal;
             MotionThread.Start();
+            }catch(Exception err){
+            
+            }
         }
 
         //受信関数
@@ -178,6 +186,8 @@ namespace Robotis_vsido_connect
                 resMsg = enc.GetString(ms.GetBuffer(), 0, (int)ms.Length);
                 ms.Close();
                 resMsg = resMsg.TrimEnd('\n');
+               SplittedMes = resMsg.Split(';');
+                label15.Text = SplittedMes[1];
             }
         }
     //ハンドモーション動作
@@ -194,25 +204,48 @@ namespace Robotis_vsido_connect
                     {
                         resMsg = null;
                         string file = motion1file;
-                        test.Start(file);
+                        if (file != ""){
+                            test = new Thread(FileAnalyze);
+                            test.IsBackground = true;
+                            test.Priority = System.Threading.ThreadPriority.BelowNormal;
+                            test.Start(file);
+                        }
                     }
                     else if (SplittedMes[0] == "0002") //やっほー
                     {
                         resMsg = null;
                         string file = motion2file;
-                        test.Start(file);
-                    }
+                        if (file != "")
+                        {
+                            test = new Thread(FileAnalyze);
+                            test.IsBackground = true;
+                            test.Priority = System.Threading.ThreadPriority.BelowNormal;
+                            test.Start(file);
+                        }
+                   }
                     else if (SplittedMes[0] == "0003") //えっ　なんだろー
                     {
                         resMsg = null;
                         string file = motion3file;
-                        test.Start(file);
+                        if (file != "")
+                        {
+                            test = new Thread(FileAnalyze);
+                            test.IsBackground = true;
+                            test.Priority = System.Threading.ThreadPriority.BelowNormal;
+                            test.Start(file);
+                        }
                     }
                     else if (SplittedMes[0] == "0004") //ぐるぐる
                     {
                         resMsg = null;
                         string file = motion4file;
-                        test.Start(file);
+                        if (file != "")
+                        {
+                            test = new Thread(FileAnalyze);
+                            test.IsBackground = true;
+                            test.Priority = System.Threading.ThreadPriority.BelowNormal;
+                            test.Start(file);
+                        }
                     }
                     else if (SplittedMes[0] == "0000") { }
                     //初期？
@@ -236,6 +269,9 @@ namespace Robotis_vsido_connect
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string file = ofd.FileName;
+                test = new Thread(FileAnalyze);
+                test.IsBackground = true;
+                test.Priority = System.Threading.ThreadPriority.BelowNormal;
                 test.Start(file);
             }
         }
@@ -243,6 +279,8 @@ namespace Robotis_vsido_connect
 //csvからモーションコマンド送信
         void FileAnalyze(object filename)
         {
+            int cnt = 0;
+            int sleeptime = 0;
             isAction = true;
             while (true)
             {
@@ -263,16 +301,23 @@ namespace Robotis_vsido_connect
                                 if (value == "ff"){
                                     command_list = new List<byte>();
                                 }
+                                cnt++;
+                                if (cnt == 4) {
+                                    sleeptime = Convert.ToInt32(value) * 10;
+                                }
                                 command_list.Add(Convert.ToByte(value, 16));
                             }
-                            //200ms間隔でv-sido connectに送る
+
+                            //コマンドで設定した間隔でv-sido connectに送る
                             byte[] command = command_list.ToArray();
                             serialport.Write(command, 0, command.Length);
-                            System.Threading.Thread.Sleep(200); //送信間隔
-
+                            System.Threading.Thread.Sleep(sleeptime); //送信間隔
+                            label17.Text = sleeptime.ToString() + "ms";
+                            cnt = 0;
                             //中断フラグが立てば終わる
                             if (stopflag)
                             {
+                                stopflag = false;
                                 isAction = false;
                                 return;
                             }
@@ -303,7 +348,7 @@ namespace Robotis_vsido_connect
             }
         }
 
-        //中断
+        //中止
         private void button5_Click(object sender, EventArgs e)
         {
             stopflag = true;
@@ -314,13 +359,70 @@ namespace Robotis_vsido_connect
         {
             byte[] command = System.Text.Encoding.ASCII.GetBytes(textBox5.Text);
             serialport.Write(command, 0, command.Length);
-            System.Threading.Thread.Sleep(200); //送信間隔
+            System.Threading.Thread.Sleep(Convert.ToInt32(command[3]) * 10); //送信間隔
         }
 
-        private void label2_Click(object sender, EventArgs e)
+         private void textBox1_Click(object sender, EventArgs e)
         {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = @"C:\";
+            ofd.Filter = "CSVファイル|*.csv";
+            ofd.FilterIndex = 0;
+            ofd.Title = "開くファイルを選択してください";
+            ofd.CheckFileExists = true;
 
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                motion1file = ofd.FileName;
+                textBox1.Text = Path.GetFileName(motion1file);
+            }
         }
+         private void textBox2_Click(object sender, EventArgs e)
+         {
+             OpenFileDialog ofd = new OpenFileDialog();
+             ofd.InitialDirectory = @"C:\";
+             ofd.Filter = "CSVファイル|*.csv";
+             ofd.FilterIndex = 0;
+             ofd.Title = "開くファイルを選択してください";
+             ofd.CheckFileExists = true;
+
+             if (ofd.ShowDialog() == DialogResult.OK)
+             {
+                 motion2file = ofd.FileName;
+                 textBox2.Text = Path.GetFileName(motion2file);
+             }
+         }
+         private void textBox3_Click(object sender, EventArgs e)
+         {
+             OpenFileDialog ofd = new OpenFileDialog();
+             ofd.InitialDirectory = @"C:\";
+             ofd.Filter = "CSVファイル|*.csv";
+             ofd.FilterIndex = 0;
+             ofd.Title = "開くファイルを選択してください";
+             ofd.CheckFileExists = true;
+
+             if (ofd.ShowDialog() == DialogResult.OK)
+             {
+                 motion3file = ofd.FileName;
+                 textBox3.Text = Path.GetFileName(motion3file);
+             }
+         }
+         private void textBox4_Click(object sender, EventArgs e)
+         {
+             OpenFileDialog ofd = new OpenFileDialog();
+             ofd.InitialDirectory = @"C:\";
+             ofd.Filter = "CSVファイル|*.csv";
+             ofd.FilterIndex = 0;
+             ofd.Title = "開くファイルを選択してください";
+             ofd.CheckFileExists = true;
+
+             if (ofd.ShowDialog() == DialogResult.OK)
+             {
+                 motion4file = ofd.FileName;
+                 textBox4.Text = Path.GetFileName(motion4file);
+             }
+         }
+
     }
 
 }
