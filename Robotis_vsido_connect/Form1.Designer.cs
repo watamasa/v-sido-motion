@@ -60,6 +60,7 @@
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
+            this.button7 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -331,11 +332,22 @@
             this.label17.Size = new System.Drawing.Size(0, 15);
             this.label17.TabIndex = 37;
             // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(167, 98);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(102, 29);
+            this.button7.TabIndex = 38;
+            this.button7.Text = "棒立ち";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(654, 400);
+            this.Controls.Add(this.button7);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label15);
@@ -407,6 +419,7 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Button button7;
     }
 }
 

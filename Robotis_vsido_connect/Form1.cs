@@ -20,7 +20,6 @@ namespace Robotis_vsido_connect
         ComboBox comb;      //comポート一覧
         SerialPort serialport;    //しりあるポート
         List<byte> command_list = new List<byte>();
-        string textstr;
 
         Thread TcpReadThread = null;
         Thread MotionThread = null;
@@ -39,14 +38,16 @@ namespace Robotis_vsido_connect
          Thread test =null;
 
 /// <summary>
-/// モーションファイル(.csv)の絶対パス指定
+/// モーションファイル(.csv)のパス指定
 /// </summary>
         string motion1file = @"C:\Users\USER\Desktop\left_hand_up.csv";
-        string motion2file = @"C:\Users\USER\Desktop\hand_test_fast.csv";
+        string motion2file = @"C:\Users\USER\Desktop\wave_hands.csv";
         string motion3file = @"C:\Users\USER\Desktop\command.csv";
         string motion4file = @"C:\Users\USER\Desktop\test.csv";
-
-
+        string defaultmotion = @"C:\Users\USER\Desktop\default.csv";
+//
+//
+//
         bool isAction = false;
         bool loopflag = false;
         bool stopflag = false;
@@ -312,7 +313,7 @@ namespace Robotis_vsido_connect
                             byte[] command = command_list.ToArray();
                             serialport.Write(command, 0, command.Length);
                             System.Threading.Thread.Sleep(sleeptime); //送信間隔
-                            label17.Text = sleeptime.ToString() + "ms";
+                            label17.Text = Path.GetFileName((string)filename)+" : "+sleeptime.ToString() + "ms";
                             cnt = 0;
                             //中断フラグが立てば終わる
                             if (stopflag)
@@ -331,8 +332,7 @@ namespace Robotis_vsido_connect
                 }
                 catch (System.Exception ee)
                 {
-                    // ファイルを開くのに失敗したとき
-                    MessageBox.Show(ee.ToString(), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+               
                 }
             }
         }
@@ -420,6 +420,18 @@ namespace Robotis_vsido_connect
              {
                  motion4file = ofd.FileName;
                  textBox4.Text = Path.GetFileName(motion4file);
+             }
+         }
+
+         private void button7_Click(object sender, EventArgs e)
+         {
+             string file = defaultmotion;
+             if (file != "")
+             {
+                 test = new Thread(FileAnalyze);
+                 test.IsBackground = true;
+                 test.Priority = System.Threading.ThreadPriority.BelowNormal;
+                 test.Start(file);
              }
          }
 
