@@ -190,6 +190,7 @@ namespace Robotis_vsido_connect
                 label15.Text = SplittedMes[1];
             }
         }
+
     //ハンドモーション動作
         void TcpFunc()
         {
@@ -249,7 +250,6 @@ namespace Robotis_vsido_connect
                     }
                     else if (SplittedMes[0] == "0000") { }
                     //初期？
-                    isAction = false;
                     resMsg = null;
                 }
             }
