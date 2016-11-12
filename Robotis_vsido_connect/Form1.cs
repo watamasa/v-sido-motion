@@ -79,7 +79,7 @@ namespace Robotis_vsido_connect
 
             CurrentDir = System.IO.Directory.GetCurrentDirectory();
 
-            this.Text = "serial";
+//            this.Text = "serial";
             textBox1.Text = Path.GetFileName(motion1file);
             textBox2.Text = Path.GetFileName(motion2file);
             textBox3.Text = Path.GetFileName(motion3file);
@@ -435,6 +435,10 @@ namespace Robotis_vsido_connect
              }
          }
 
-    }
+		private void label18_Click(object sender, EventArgs e)
+		{
+
+		}
+	}
 
 }
