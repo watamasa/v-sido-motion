@@ -28,10 +28,17 @@ namespace Robotis_vsido_connect
         //	string ipOrHost = "192.168.1.8";
         //	string ipOrHost = "127.0.0.1";
 
+        string RobotisHost = "";
+        int RobotisPort =1;
+
         int port = 50377;
 
         System.Text.Encoding enc = null;
         System.Net.Sockets.TcpClient tcp = null;
+
+        System.Net.Sockets.TcpClient tcp2 = null;
+
+        NetworkStream ns2 = null;
         string resMsg = null;
         string[] SplittedMes = null;
          Thread motion_thread =null;
@@ -39,11 +46,11 @@ namespace Robotis_vsido_connect
 /// <summary>
 /// モーションファイル(.csv)のパス指定
 /// </summary>
-        string motion1file = @"C:\Users\USER\Desktop\left_hand_up.csv";
-        string motion2file = @"C:\Users\USER\Desktop\wave_hands.csv";
-        string motion3file = @"C:\Users\USER\Desktop\command.csv";
-        string motion4file = @"C:\Users\USER\Desktop\test.csv";
-        string defaultmotion = @"C:\Users\USER\Desktop\default.csv";
+         string motion1file = "byebye.csv";
+        string motion2file = "byebye.csv";
+        string motion3file = "kick.csv";
+        string motion4file = "guruguru.csv";
+        string defaultmotion = "default.csv";
 //
 //
 //
@@ -74,7 +81,7 @@ namespace Robotis_vsido_connect
             comb.Items.Add("COM12");
             comb.Items.Add("COM13");
             comb.Items.Add("COM14");
-            comb.Items.Add("COM16");
+            comb.Items.Add("COM19");
             comb.SelectedIndex = 0;
 
         
@@ -132,6 +139,24 @@ namespace Robotis_vsido_connect
             {
                 MessageBox.Show(ex.Message);
             }
+            
+     /*        
+            tcp2 = new System.Net.Sockets.TcpClient(RobotisHost, RobotisPort);
+                label13.Text = "status: 接続";
+            ns2 = tcp2.GetStream();
+            ns2.ReadTimeout = Timeout.Infinite;
+            ns2.WriteTimeout = Timeout.Infinite;
+            enc = System.Text.Encoding.UTF8;
+            byte[] serial_byte2 = new byte[5];
+                serial_byte2[0] = 0xff;
+                serial_byte2[1] = 0x67;
+                serial_byte2[2] = 0x05;
+                serial_byte2[3] = 0xfe;
+                serial_byte2[4] = 0x63;
+            toRobotisSend(serial_byte2);        
+            */
+
+
         }
 
         //切断?
@@ -200,6 +225,10 @@ namespace Robotis_vsido_connect
             byte[] sendBytes = enc.GetBytes(sendMsg + '\n');
             ns.Write(sendBytes, 0, sendBytes.Length);
 
+        }
+        void toRobotisSend(byte[] sendBytes)
+        {
+            ns2.Write(sendBytes, 0, sendBytes.Length);
         }
 
     //ハンドモーション動作
@@ -293,10 +322,7 @@ namespace Robotis_vsido_connect
             int cnt = 0;
             int sleeptime = 0;
             isAction = true;
-            if (tcpflag)
-            {
-                toServerSend("busy");
-            }
+
             while (true)
             {
                 try
@@ -307,6 +333,10 @@ namespace Robotis_vsido_connect
                         // ストリームの末尾まで繰り返す
                         while (!sr.EndOfStream)
                         {
+                            if (tcpflag)
+                            {
+                                toServerSend("busy");
+                            }
                             // ファイルから一行読み込む
                             var line = sr.ReadLine();
                             // 読み込んだ一行をカンマ毎に分けて配列に格納する
@@ -326,6 +356,7 @@ namespace Robotis_vsido_connect
                             //コマンドで設定した間隔でv-sido connectに送る
                             byte[] command = command_list.ToArray();
                             serialport.Write(command, 0, command.Length);
+                          ///  toRobotisSend(command);
                             System.Threading.Thread.Sleep(sleeptime); //送信間隔
                             label17.Text = Path.GetFileName((string)filename)+" : "+sleeptime.ToString() + "ms";
                             cnt = 0;
