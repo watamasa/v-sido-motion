@@ -28,3 +28,4 @@ C:\Users\USER\Desktop\HAR\v003\v-sido-motion\Robotis_vsido_connect\bin\Debug\Rob
 C:\Users\USER\Desktop\HAR\v003\v-sido-motion\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.Form1.resources
 C:\Users\USER\Desktop\HAR\v003\v-sido-motion\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.Properties.Resources.resources
 C:\Users\USER\Desktop\HAR\v003\v-sido-motion\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.csproj.GenerateResource.Cache
+C:\Users\USER\Desktop\HAR\v003\v-sido-motion\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.csprojResolveAssemblyReference.cache

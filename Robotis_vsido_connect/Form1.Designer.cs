@@ -376,6 +376,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
+            this.label19.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.label19.Location = new System.Drawing.Point(673, 43);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(51, 15);
@@ -385,6 +386,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
+            this.label16.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.label16.Location = new System.Drawing.Point(606, 43);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(51, 15);
@@ -393,6 +395,7 @@
             // 
             // textBox7
             // 
+            this.textBox7.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.textBox7.Location = new System.Drawing.Point(609, 72);
             this.textBox7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox7.Name = "textBox7";
@@ -404,6 +407,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
+            this.label17.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.label17.Location = new System.Drawing.Point(663, 79);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(22, 15);
@@ -451,6 +455,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
+            this.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";

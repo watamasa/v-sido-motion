@@ -31,16 +31,12 @@ namespace Robotis_vsido_connect
 
         string RobotisHost = "192.168.4.1";
         int RobotisPort =55555;
-       
+
         Client Cl;
         int port = 50377;
 
         System.Text.Encoding enc = null;
         System.Net.Sockets.TcpClient tcp = null;
-
-        System.Net.Sockets.TcpClient tcp2 = null;
-
-        NetworkStream ns2 = null;
         string resMsg = null;
         string[] SplittedMes = null;
         Thread motion_thread =null;
@@ -62,7 +58,6 @@ namespace Robotis_vsido_connect
         bool loopflag = false;
         bool stopflag = false;
         bool tcpflag  = false;
-        bool stepflag = false;
 
         int timer_counter = 0;
        
@@ -98,6 +93,8 @@ namespace Robotis_vsido_connect
 
             label19.Text = "";
 
+            textBox7.Enabled = false;
+
             motion_thread = new Thread(FileAnalyze);
             motion_thread.IsBackground = true;
             motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
@@ -124,7 +121,7 @@ namespace Robotis_vsido_connect
 
             try
             {
-                serialport.Open();
+           //     serialport.Open();
                 label13.Text = "status: 接続";
             }
             catch
@@ -142,9 +139,9 @@ namespace Robotis_vsido_connect
                 serial_byte[3] = 0xfe;
                 serial_byte[4] = 0x63;
 
-                serialport.Write(serial_byte, 0, serial_byte.Length);
-
-                Cl = new Client("192.168.4.1", 55555);
+           //     serialport.Write(serial_byte, 0, serial_byte.Length);
+                Cl = new Client(RobotisHost, RobotisPort);
+        
                 Cl.Send(serial_byte);
             }
             catch (Exception ex)
@@ -157,7 +154,7 @@ namespace Robotis_vsido_connect
         //切断?
         private void button2_Click(object sender, EventArgs e)
         {
-            serialport.Close();
+        //    serialport.Close();
             label13.Text = "status: 未接続";
         }
 
@@ -186,6 +183,8 @@ namespace Robotis_vsido_connect
             }catch(Exception err){
                 MessageBox.Show(err.Message);
             }
+
+            textBox7.Enabled=true;
 
             //タイマーの作成
             boringTimer.Interval = 1000;
@@ -377,40 +376,55 @@ namespace Robotis_vsido_connect
                     // csvファイルを開く
                     using (var sr = new System.IO.StreamReader((string)filename))
                     {
-                        // ストリームの末尾まで繰り返す
-                        while (!sr.EndOfStream)
+                        try
                         {
-                            if (tcpflag)
+                            // ストリームの末尾まで繰り返す
+                            while (!sr.EndOfStream)
                             {
-                                toServerSend("busy");
-                            }
-                            // ファイルから一行読み込む
-                            var line = sr.ReadLine();
-                            // 読み込んだ一行をカンマ毎に分けて配列に格納する
-                            var values = line.Split(',');
-                            foreach (var value in values)
-                            {
-                                if (value == "ff"){
-                                    command_list = new List<byte>();
+                                if (tcpflag)
+                                {
+                                    toServerSend("busy");
                                 }
-                                cnt++;
-                                if (cnt == 4) {
-                                //  sleeptime = Convert.ToInt32(value) * 10;
-                                    sleeptime=Int32.Parse(value, System.Globalization.NumberStyles.HexNumber)*10;
+                                // ファイルから一行読み込む
+                                var line = sr.ReadLine();
+                                // 読み込んだ一行をカンマ毎に分けて配列に格納する
+                                var values = line.Split(',');
+                                foreach (var value in values)
+                                {
+                                    if (value == "ff")
+                                    {
+                                        command_list = new List<byte>();
+                                    }
+                                    cnt++;
+                                    if (cnt == 4)
+                                    {
+                                        //  sleeptime = Convert.ToInt32(value) * 10;
+                                        sleeptime = Int32.Parse(value, System.Globalization.NumberStyles.HexNumber) * 10;
+                                    }
+                                    command_list.Add(Convert.ToByte(value, 16));
                                 }
-                                command_list.Add(Convert.ToByte(value, 16));
-                            }
 
-                            //コマンドで設定した間隔でv-sido connectに送る
-                            byte[] command = command_list.ToArray();
-                            serialport.Write(command, 0, command.Length);
-                            Cl.Send(command);
-                             System.Threading.Thread.Sleep(sleeptime); //送信間隔
-                            cnt = 0;
-                            //中断フラグが立てば終わる
-                            if (stopflag)
+                                //コマンドで設定した間隔でv-sido connectに送る
+                                byte[] command = command_list.ToArray();
+                                //    serialport.Write(command, 0, command.Length);
+                                Cl.Send(command);
+                                System.Threading.Thread.Sleep(sleeptime); //送信間隔
+                                cnt = 0;
+                                //中断フラグが立てば終わる
+                                if (stopflag)
+                                {
+                                    stopflag = false;
+                                    isAction = false;
+                                    if (tcpflag)
+                                    {
+                                        toServerSend("ready");
+                                    }
+                                    return;
+                                }
+                            }
+                            //ループのチェックボックスが入っていなければ終わる
+                            if (!loopflag)
                             {
-                                stopflag = false;
                                 isAction = false;
                                 if (tcpflag)
                                 {
@@ -418,15 +432,8 @@ namespace Robotis_vsido_connect
                                 }
                                 return;
                             }
-                        }
-                        //ループのチェックボックスが入っていなければ終わる
-                        if (!loopflag) {
-                            isAction = false;
-                            if (tcpflag)
-                            {
-                                toServerSend("ready");	
-                            }
-                            return;
+                        }catch(System.Exception error){
+                            MessageBox.Show(error.Message);              
                         }
                     }
                 }
@@ -458,7 +465,7 @@ namespace Robotis_vsido_connect
         private void button6_Click(object sender, EventArgs e)
         {
             byte[] command = System.Text.Encoding.ASCII.GetBytes(textBox5.Text);
-            serialport.Write(command, 0, command.Length);7
+            serialport.Write(command, 0, command.Length);
     Cl.Send(command);
             System.Threading.Thread.Sleep(Convert.ToInt32(command[3]) * 10); //送信間隔
         }
