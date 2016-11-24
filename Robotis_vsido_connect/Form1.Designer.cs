@@ -35,7 +35,6 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -59,10 +58,15 @@
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
             this.label18 = new System.Windows.Forms.Label();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.button8 = new System.Windows.Forms.Button();
+            this.boringTimer = new System.Windows.Forms.Timer(this.components);
+            this.label19 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -107,7 +111,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(12, 95);
+            this.button4.Location = new System.Drawing.Point(12, 79);
             this.button4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(127, 29);
@@ -159,7 +163,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(149, 22);
             this.textBox1.TabIndex = 17;
-            this.textBox1.Click += new System.EventHandler(this.textBox1_Click);
+            this.textBox1.DoubleClick += new System.EventHandler(this.textBox1_Click);
             // 
             // textBox2
             // 
@@ -168,7 +172,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(149, 22);
             this.textBox2.TabIndex = 18;
-            this.textBox2.Click += new System.EventHandler(this.textBox2_Click);
+            this.textBox2.DoubleClick += new System.EventHandler(this.textBox2_Click);
             // 
             // textBox3
             // 
@@ -177,7 +181,7 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(149, 22);
             this.textBox3.TabIndex = 19;
-            this.textBox3.Click += new System.EventHandler(this.textBox3_Click);
+            this.textBox3.DoubleClick += new System.EventHandler(this.textBox3_Click);
             // 
             // textBox4
             // 
@@ -186,7 +190,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(149, 22);
             this.textBox4.TabIndex = 20;
-            this.textBox4.Click += new System.EventHandler(this.textBox4_Click);
+            this.textBox4.DoubleClick += new System.EventHandler(this.textBox4_Click);
             // 
             // button3
             // 
@@ -202,7 +206,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(16, 324);
+            this.checkBox1.Location = new System.Drawing.Point(19, 293);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(94, 19);
@@ -213,7 +217,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(141, 301);
+            this.button5.Location = new System.Drawing.Point(141, 271);
             this.button5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(147, 60);
@@ -244,7 +248,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 158);
+            this.label6.Location = new System.Drawing.Point(13, 175);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(81, 15);
             this.label6.TabIndex = 26;
@@ -330,26 +334,9 @@
             this.label15.Size = new System.Drawing.Size(0, 15);
             this.label15.TabIndex = 35;
             // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(12, 262);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(60, 15);
-            this.label16.TabIndex = 36;
-            this.label16.Text = "実行中：";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(79, 262);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(0, 15);
-            this.label17.TabIndex = 37;
-            // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(167, 98);
+            this.button7.Location = new System.Drawing.Point(12, 121);
             this.button7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(101, 29);
@@ -367,14 +354,74 @@
             this.label18.TabIndex = 32;
             this.label18.Text = "ROBOTIS-MINI Connect Copyleft(c) 2016 HAL東京 先端ロボット開発学科";
             // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(155, 83);
+            this.textBox6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(117, 22);
+            this.textBox6.TabIndex = 39;
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(294, 83);
+            this.button8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(75, 31);
+            this.button8.TabIndex = 40;
+            this.button8.Text = "実行";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(673, 43);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(51, 15);
+            this.label19.TabIndex = 41;
+            this.label19.Text = "label19";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(606, 43);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(51, 15);
+            this.label16.TabIndex = 42;
+            this.label16.Text = "たいくつ";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(609, 72);
+            this.textBox7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.textBox7.Size = new System.Drawing.Size(48, 22);
+            this.textBox7.TabIndex = 43;
+            this.textBox7.Text = "5";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(663, 79);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(22, 15);
+            this.label17.TabIndex = 44;
+            this.label17.Text = "秒";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(653, 420);
-            this.Controls.Add(this.button7);
+            this.ClientSize = new System.Drawing.Size(771, 420);
             this.Controls.Add(this.label17);
+            this.Controls.Add(this.textBox7);
             this.Controls.Add(this.label16);
+            this.Controls.Add(this.label19);
+            this.Controls.Add(this.button8);
+            this.Controls.Add(this.textBox6);
+            this.Controls.Add(this.button7);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
@@ -421,7 +468,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
@@ -445,10 +491,15 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Button button7;
 		private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Timer boringTimer;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.Label label17;
 	}
 }
 
