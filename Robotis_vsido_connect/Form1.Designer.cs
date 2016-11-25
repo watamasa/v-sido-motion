@@ -67,6 +67,7 @@
             this.label16 = new System.Windows.Forms.Label();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -402,7 +403,7 @@
             this.textBox7.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.textBox7.Size = new System.Drawing.Size(48, 22);
             this.textBox7.TabIndex = 43;
-            this.textBox7.Text = "5";
+            this.textBox7.Text = "10";
             // 
             // label17
             // 
@@ -414,11 +415,23 @@
             this.label17.TabIndex = 44;
             this.label17.Text = "秒";
             // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(691, 72);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(59, 19);
+            this.checkBox2.TabIndex = 45;
+            this.checkBox2.Text = "有効";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(771, 420);
+            this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.textBox7);
             this.Controls.Add(this.label16);
@@ -505,6 +518,7 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.CheckBox checkBox2;
 	}
 }
 

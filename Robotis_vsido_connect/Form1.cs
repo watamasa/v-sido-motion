@@ -93,7 +93,7 @@ namespace Robotis_vsido_connect
 
             label19.Text = "";
 
-            textBox7.Enabled = false;
+            textBox7.Enabled = true;
 
             motion_thread = new Thread(FileAnalyze);
             motion_thread.IsBackground = true;
@@ -189,12 +189,11 @@ namespace Robotis_vsido_connect
             //タイマーの作成
             boringTimer.Interval = 1000;
             boringTimer.Tick += new EventHandler(timer_tick);
-            boringTimer.Enabled = true;
-
+     
         }
         private void timer_tick(object Sender, EventArgs e) {
             timer_counter++;
-            if(timer_counter > Convert.ToInt32(label17.Text)){
+            if(timer_counter >int.Parse(textBox7.Text)){
                 RandomMotion();
             }
             label19.Text = timer_counter.ToString() + "s";
@@ -553,6 +552,16 @@ namespace Robotis_vsido_connect
              motion_thread.IsBackground = true;
              motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
              motion_thread.Start(file);
+         }
+
+         private void checkBox2_CheckedChanged(object sender, EventArgs e)
+         {
+             if (boringTimer.Enabled) {
+                 boringTimer.Stop();
+             }else{
+             boringTimer.Start();
+        
+             }
          }
 	}
 
