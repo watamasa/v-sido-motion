@@ -21,46 +21,49 @@ namespace Robotis_vsido_connect
         ComboBox comb;      //comポート一覧
         SerialPort serialport;    //しりあるポート
         List<byte> command_list = new List<byte>();
-
-        Thread TcpReadThread = null;
-        Thread MotionThread = null;
-        NetworkStream ns = null;
+        
+      //上位システム
         string ipOrHost = "127.0.0.1";
-        //	string ipOrHost = "192.168.1.8";
-        //	string ipOrHost = "127.0.0.1";
-
-        string RobotisHost = "192.168.4.1";
-        int RobotisPort =55555;
-
-        Client Cl;
         int port = 50377;
-
-        System.Text.Encoding enc = null;
         System.Net.Sockets.TcpClient tcp = null;
         string resMsg = null;
         string[] SplittedMes = null;
-        Thread motion_thread =null;
+        Thread TcpReadThread = null;
+        NetworkStream ns = null;
 
+      //robotismini-wifi
+        string RobotisHost = "192.168.4.1";
+        int RobotisPort =55555;
+        Client Cl;
+      
+      //他  
+        System.Text.Encoding enc = null;
+        Thread motion_thread =null;
+        Thread MotionThread = null;
+        string fullpath = "";
+        int timer_counter = 0;
+       
 /// <summary>
-/// モーションファイル(.csv)のパス指定
+/// モーションファイル(.csv)
 /// </summary>
-         string motion1file = "byebye.csv";
+         string motion1file = "dash.csv";
         string motion2file = "byebye.csv";
-        string motion3file = "kick.csv";
-        string motion4file = "guruguru.csv";
+        string motion3file = "circle.csv";
+        string motion4file = "guru.csv";
         string defaultmotion = "default.csv";
         string kickmotion = "kick.csv";
         string stepmotion = "step.csv";
-//
-//
-//
+
+
+    //フラグ
         bool isAction = false;
         bool loopflag = false;
         bool stopflag = false;
         bool tcpflag  = false;
+        bool boring_flag = false;
+        bool iswifi =true;
 
-        int timer_counter = 0;
-       
+        
         public Form1()
         {
             InitializeComponent();
@@ -69,21 +72,6 @@ namespace Robotis_vsido_connect
         private void Form1_Load(object sender, EventArgs e)
         {
             comb = comboBox1;
-            comb.Items.Add("COM1");
-            comb.Items.Add("COM2");
-            comb.Items.Add("COM3");
-            comb.Items.Add("COM4");
-            comb.Items.Add("COM5");
-            comb.Items.Add("COM6");
-            comb.Items.Add("COM7");
-            comb.Items.Add("COM8");
-            comb.Items.Add("COM9");
-            comb.Items.Add("COM10");
-            comb.Items.Add("COM11");
-            comb.Items.Add("COM12");
-            comb.Items.Add("COM13");
-            comb.Items.Add("COM14");
-            comb.Items.Add("COM19");
             comb.SelectedIndex = 13;
 
             textBox1.Text = Path.GetFileName(motion1file);
@@ -94,6 +82,8 @@ namespace Robotis_vsido_connect
             label19.Text = "";
 
             textBox7.Enabled = true;
+            groupBox1.Enabled = false;
+            groupBox2.Enabled = false;
 
             motion_thread = new Thread(FileAnalyze);
             motion_thread.IsBackground = true;
@@ -121,7 +111,10 @@ namespace Robotis_vsido_connect
 
             try
             {
-           //     serialport.Open();
+                if (!iswifi)
+                {
+                    serialport.Open();
+                }
                 label13.Text = "status: 接続";
             }
             catch
@@ -138,24 +131,43 @@ namespace Robotis_vsido_connect
                 serial_byte[2] = 0x05;
                 serial_byte[3] = 0xfe;
                 serial_byte[4] = 0x63;
-
-           //     serialport.Write(serial_byte, 0, serial_byte.Length);
-                Cl = new Client(RobotisHost, RobotisPort);
-        
-                Cl.Send(serial_byte);
+                if (iswifi)
+                {
+                    try
+                    {
+                        Cl = new Client(RobotisHost, RobotisPort);
+                        Cl.Send(serial_byte);
+                    }
+                    catch {
+                        MessageBox.Show("接続できません", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                  }
+                else
+                {
+                    serialport.Write(serial_byte, 0, serial_byte.Length);
+            
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
 
+            groupBox1.Enabled = true;
+
+
         }
 
         //切断?
         private void button2_Click(object sender, EventArgs e)
         {
-        //    serialport.Close();
+            if (!iswifi)
+            {
+                serialport.Close();
+            }
             label13.Text = "status: 未接続";
+            groupBox1.Enabled = false;
+            groupBox2.Enabled = false;
         }
 
         //受信開始ボタン
@@ -185,6 +197,7 @@ namespace Robotis_vsido_connect
             }
 
             textBox7.Enabled=true;
+            groupBox2.Enabled = true;
 
             //タイマーの作成
             boringTimer.Interval = 1000;
@@ -208,6 +221,7 @@ namespace Robotis_vsido_connect
                 System.IO.MemoryStream ms = new System.IO.MemoryStream();
                 byte[] resBytes = new byte[2048];
                 int resSize = 0;
+                int s ;
                 do
                 {
                     resSize = ns.Read(resBytes, 0, resBytes.Length);
@@ -223,6 +237,7 @@ namespace Robotis_vsido_connect
                 resMsg = resMsg.TrimEnd('\n');
                SplittedMes = resMsg.Split(';');
                 label15.Text = SplittedMes[1];
+                s = Cl.read();
             }
         }
         //送る
@@ -317,6 +332,7 @@ namespace Robotis_vsido_connect
             //70%の確立で
             if (r_res < 0.7){
                 string file = stepmotion;
+                boring_flag = true;
                 if (file != "")
                 {
                     motion_thread = new Thread(FileAnalyze);
@@ -354,6 +370,7 @@ namespace Robotis_vsido_connect
             {
                 string file = ofd.FileName;
                 textBox6.Text = Path.GetFileName(file);
+                fullpath = file;
                 motion_thread = new Thread(FileAnalyze);
                 motion_thread.IsBackground = true;
                 motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
@@ -367,6 +384,7 @@ namespace Robotis_vsido_connect
             int cnt = 0;
             int sleeptime = 0;
             isAction = true;
+            int stepcnt=0;
 
             while (true)
             {
@@ -405,8 +423,12 @@ namespace Robotis_vsido_connect
 
                                 //コマンドで設定した間隔でv-sido connectに送る
                                 byte[] command = command_list.ToArray();
-                                //    serialport.Write(command, 0, command.Length);
-                                Cl.Send(command);
+                                if (iswifi){
+                                    Cl.Send(command);
+                                }
+                                else {
+                                    serialport.Write(command, 0, command.Length);
+                                }
                                 System.Threading.Thread.Sleep(sleeptime); //送信間隔
                                 cnt = 0;
                                 //中断フラグが立てば終わる
@@ -424,6 +446,10 @@ namespace Robotis_vsido_connect
                             //ループのチェックボックスが入っていなければ終わる
                             if (!loopflag)
                             {
+                                if (boring_flag  && stepcnt < 3) {
+                                    stepcnt++;
+                                    break;
+                                }
                                 isAction = false;
                                 if (tcpflag)
                                 {
@@ -464,11 +490,16 @@ namespace Robotis_vsido_connect
         private void button6_Click(object sender, EventArgs e)
         {
             byte[] command = System.Text.Encoding.ASCII.GetBytes(textBox5.Text);
-            serialport.Write(command, 0, command.Length);
-    Cl.Send(command);
+            if (iswifi){
+               Cl.Send(command);
+            }
+            else {
+               serialport.Write(command, 0, command.Length);            
+            }
             System.Threading.Thread.Sleep(Convert.ToInt32(command[3]) * 10); //送信間隔
         }
 
+//テキストボックスをダブルクリックされたらダイアログを開く
          private void textBox1_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -529,8 +560,9 @@ namespace Robotis_vsido_connect
                  textBox4.Text = Path.GetFileName(motion4file);
              }
          }
-
-         private void button7_Click(object sender, EventArgs e)
+        
+//棒立ちボタン    
+        private void button7_Click(object sender, EventArgs e)
          {
              string file = defaultmotion;
              if (file != "")
@@ -539,30 +571,49 @@ namespace Robotis_vsido_connect
                  motion_thread.IsBackground = true;
                  motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
                  motion_thread.Start(file);
-         }
-         }
-
-         private void button8_Click(object sender, EventArgs e)
+             }
+        }
+//実行ボタン
+         private void DoButton_Click(object sender, EventArgs e)
          {
-             if (textBox6.Text == null) {
+
+             if (textBox6.Text == null && !isAction) {
                  return;
              }
-             string file = textBox6.Text;
+             string file = fullpath;
              motion_thread = new Thread(FileAnalyze);
              motion_thread.IsBackground = true;
              motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
              motion_thread.Start(file);
          }
-
-         private void checkBox2_CheckedChanged(object sender, EventArgs e)
+//たいくつ 
+         private void boring_CheckedChanged(object sender, EventArgs e)
          {
              if (boringTimer.Enabled) {
                  boringTimer.Stop();
              }else{
              boringTimer.Start();
-        
              }
          }
+//wifiのラジオボタン
+         private void wifibutton_click(object sender, EventArgs e)
+         {
+                 wifibutton.Checked = true;
+                 wirebutton.Checked = false;
+                 label1.Enabled = false;
+                 comboBox1.Enabled = false;
+                 iswifi = true;
+         }
+//有線のラジオボタン
+         private void wirebutton_click(object sender, EventArgs e)
+         {
+                 wifibutton.Checked = false;
+                 wirebutton.Checked = true;
+                 label1.Enabled = true;
+                 comboBox1.Enabled = true;
+                 iswifi = false;
+         }
+
 	}
 
 }
