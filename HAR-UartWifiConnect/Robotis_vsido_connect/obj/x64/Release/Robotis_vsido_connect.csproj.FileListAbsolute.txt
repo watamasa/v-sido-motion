@@ -1,7 +1,0 @@
-C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\bin\x64\Release\Robotis_vsido_connect.exe
-C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\bin\x64\Release\Robotis_vsido_connect.pdb
-C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x64\Release\Robotis_vsido_connect.Form1.resources
-C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x64\Release\Robotis_vsido_connect.Properties.Resources.resources
-C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x64\Release\Robotis_vsido_connect.csproj.GenerateResource.Cache
-C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x64\Release\Robotis_vsido_connect.exe
-C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x64\Release\Robotis_vsido_connect.pdb
