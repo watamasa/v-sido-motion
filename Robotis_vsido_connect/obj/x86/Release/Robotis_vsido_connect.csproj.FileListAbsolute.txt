@@ -13,3 +13,5 @@ C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\v-sido-motion\Robotis_vsido_connec
 C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\v-sido-motion\Robotis_vsido_connect\obj\x86\Release\Robotis_vsido_connect.Form1.resources
 C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\v-sido-motion\Robotis_vsido_connect\obj\x86\Release\Robotis_vsido_connect.Properties.Resources.resources
 C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\v-sido-motion\Robotis_vsido_connect\obj\x86\Release\Robotis_vsido_connect.csproj.GenerateResource.Cache
+C:\Users\USER\Desktop\HAR\v\v-sido-motion\Robotis_vsido_connect\obj\x86\Release\Robotis_vsido_connect.exe
+C:\Users\USER\Desktop\HAR\v\v-sido-motion\Robotis_vsido_connect\obj\x86\Release\Robotis_vsido_connect.pdb

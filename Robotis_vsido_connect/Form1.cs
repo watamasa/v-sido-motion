@@ -59,6 +59,15 @@ namespace Robotis_vsido_connect
         string stepmotion = "boringstep.csv";
         string dancefile = "dance_all.csv";
 
+        List<List<byte>> motion1 = new List<List<byte>>();
+        List<List<byte>> motion2 = new List<List<byte>>();
+        List<List<byte>> motion3 = new List<List<byte>>();
+        List<List<byte>> motion4 = new List<List<byte>>();
+        List<List<byte>> defaultm = new List<List<byte>>();
+        List<List<byte>> kickm = new List<List<byte>>();
+        List<List<byte>> stepm = new List<List<byte>>();
+        List<List<byte>> dancem= new List<List<byte>>();
+
 
         //フラグ
         bool isAction = false;
@@ -91,10 +100,15 @@ namespace Robotis_vsido_connect
             groupBox1.Enabled = false;
             groupBox2.Enabled = false;
 
-            //      motion_thread = new Thread(FileAnalyze);
-            //    motion_thread.IsBackground = true;
-            //  motion_thread.Priority = System.Threading.ThreadPriority.Normal;
 
+            motion1 = readfile(motion1file);
+            motion2 = readfile(motion2file);
+            motion3 = readfile(motion3file);
+            motion4 = readfile(motion4file);
+            defaultm = readfile(defaultmotion);
+            kickm = readfile(kickmotion);
+            stepm = readfile(stepmotion);
+            dancem = readfile(dancefile);
         }
 
 
@@ -285,10 +299,10 @@ namespace Robotis_vsido_connect
                         string file = motion1file;
                         if (file != "")
                         {
-                            motion_thread = new Thread(FileAnalyze);
+                            motion_thread = new Thread(() => FileAnalyze(motion1));
                             motion_thread.IsBackground = true;
                             motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-                            motion_thread.Start(file);
+                            motion_thread.Start();
                         }
                     }
                     else if (SplittedMes[0] == "0002") //やっほー
@@ -298,10 +312,10 @@ namespace Robotis_vsido_connect
                         string file = motion2file;
                         if (file != "")
                         {
-                            motion_thread = new Thread(FileAnalyze);
+                            motion_thread = new Thread(() => FileAnalyze(motion2));
                             motion_thread.IsBackground = true;
                             motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-                            motion_thread.Start(file);
+                            motion_thread.Start();
                         }
                     }
                     else if (SplittedMes[0] == "0003") //えっ　なんだろー
@@ -311,10 +325,10 @@ namespace Robotis_vsido_connect
                         string file = motion3file;
                         if (file != "")
                         {
-                            motion_thread = new Thread(FileAnalyze);
+                            motion_thread = new Thread(() => FileAnalyze(motion3));
                             motion_thread.IsBackground = true;
                             motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-                            motion_thread.Start(file);
+                            motion_thread.Start();
                         }
                     }
                     else if (SplittedMes[0] == "0004") //ぐるぐる
@@ -324,10 +338,10 @@ namespace Robotis_vsido_connect
                         string file = motion4file;
                         if (file != "")
                         {
-                            motion_thread = new Thread(FileAnalyze);
+                            motion_thread = new Thread(() => FileAnalyze(motion4));
                             motion_thread.IsBackground = true;
                             motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-                            motion_thread.Start(file);
+                            motion_thread.Start();
                         }
                     }
                     else if (SplittedMes[0] == "0000")
@@ -336,10 +350,10 @@ namespace Robotis_vsido_connect
                           string file = defaultmotion;
                           if (file != "")
                           {
-                              motion_thread = new Thread(FileAnalyze);
+                             motion_thread = new Thread(() => FileAnalyze(defaultm));
                               motion_thread.IsBackground = true;
                               motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-                              motion_thread.Start(file);
+                              motion_thread.Start();
                           }
                           */
                     }
@@ -359,10 +373,10 @@ namespace Robotis_vsido_connect
                
                 if (file != "")
                 {
-                    motion_thread = new Thread(FileAnalyze);
+                    motion_thread = new Thread(() => FileAnalyze(stepm));
                     motion_thread.IsBackground = true;
                     motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-                    motion_thread.Start(file);
+                    motion_thread.Start();
                 }
             }
             //30%
@@ -371,10 +385,10 @@ namespace Robotis_vsido_connect
                 string file = kickmotion;
                 if (file != "")
                 {
-                    motion_thread = new Thread(FileAnalyze);
+                    motion_thread = new Thread(() => FileAnalyze(kickm));
                     motion_thread.IsBackground = true;
                     motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-                    motion_thread.Start(file);
+                    motion_thread.Start();
                 }
             }
         }
@@ -396,68 +410,52 @@ namespace Robotis_vsido_connect
                 string file = ofd.FileName;
                 textBox6.Text = Path.GetFileName(file);
                 fullpath = file;
-                motion_thread = new Thread(FileAnalyze);
+                motion_thread = new Thread(() => FileAnalyze(readfile(file)));
                 motion_thread.IsBackground = true;
                 motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-                motion_thread.Start(file);
+                motion_thread.Start();
             }
         }
 
         //csvからモーションコマンド送信
-        void FileAnalyze(object filename)
+        void FileAnalyze(List<List<byte>> filename)
         {
-            int cnt = 0;
             int sleeptime = 0;
             isAction = true;
+
+            int c = 0;
+            int end = filename.Count;
 
             while (true)
             {
                 try
                 {
-                    // csvファイルを開く
-                    using (var sr = new System.IO.StreamReader((string)filename))
+
+                    try
                     {
-                        try
+                        // ストリームの末尾まで繰り返す
+                        while (true)
                         {
-                            // ストリームの末尾まで繰り返す
-                            while (!sr.EndOfStream)
-                            {
+                            c = 0;
+                            for (;c<=end;c++) { 
                                 if (tcpflag)
                                 {
                                     //上位システム接続時にbusyを送る
                                     toServerSend("busy");
                                 }
-                                // ファイルから一行読み込む
-                                var line = sr.ReadLine();
-                                // 読み込んだ一行をカンマ毎に分けて配列に格納する
-                                var values = line.Split(',');
-                                foreach (var value in values)
-                                {
-                                    if (value == "ff")
-                                    {
-                                        command_list = new List<byte>();
-                                    }
-                                    cnt++;
-                                    if (cnt == 4)
-                                    {
-                                        //コマンドから各モーションの動作時間を算出
-                                         sleeptime = Int32.Parse(value, System.Globalization.NumberStyles.HexNumber) * 10;
-                                    }
-                                    command_list.Add(Convert.ToByte(value, 16));
-                                }
-
+                                //コマンドから各モーションの動作時間を算出
+                                sleeptime = Int32.Parse(filename[c][3].ToString(), System.Globalization.NumberStyles.HexNumber) * 10;
                                 //コマンドで設定した間隔でv-sido connectに送る
-                                byte[] command = command_list.ToArray();
                                 if (iswifi)
                                 {
-                                    Cl.Send(command);
+                                    Cl.Send(filename[c].ToArray());
                                 }
                                 else
                                 {
-                                    serialport.Write(command, 0, command.Length);
+                                    serialport.Write(filename[c].ToArray(), 0, filename[c].ToArray().Length);
                                 }
                                 System.Threading.Thread.Sleep(sleeptime); //動作間隔
-                                cnt = 0;
+
                                 //中断フラグが立てば終わる
                                 if (stopflag)
                                 {
@@ -475,7 +473,7 @@ namespace Robotis_vsido_connect
                             //ループのチェックボックスが入っていなければ終わる
                             if (!loopflag)
                             {
-                               
+
                                 isAction = false;
                                 if (tcpflag)
                                 {
@@ -490,16 +488,15 @@ namespace Robotis_vsido_connect
                                 PlaySound("Rob_music2.wav");
                             }
                         }
-                        catch (System.Exception error)
+                    } catch (System.Exception error)
+                    {
+                        MessageBox.Show(error.Message);
+                        isAction = false;
+                        if (tcpflag)
                         {
-                            MessageBox.Show(error.Message);
-                            isAction = false;
-                                   if (tcpflag)
-                                    {
-                                        toServerSend("ready");
-                                    }
-                            return;
+                            toServerSend("ready");
                         }
+                        return;
                     }
                 }
                 catch (System.Exception ee)
@@ -514,6 +511,35 @@ namespace Robotis_vsido_connect
                 }
             }
         }
+
+        List<List<byte>> readfile(string filename) {
+            // csvファイルを開く
+
+            List<List<byte>> command_file = new List<List<byte>>();
+            using (var sr = new System.IO.StreamReader((string)filename))
+            {
+                try
+                {
+                    // ストリームの末尾まで繰り返す
+                    while (!sr.EndOfStream)
+                    {
+                        // ファイルから一行読み込む
+                        var line = sr.ReadLine();
+                        command_list = new List<byte>();
+                        // 読み込んだ一行をカンマ毎に分けて配列に格納する
+                        var values = line.Split(',');
+                        foreach (var value in values)
+                        {
+                            command_list.Add(Convert.ToByte(value, 16));
+                        }
+                        command_file.Add(command_list);
+                    }
+                }
+                catch { }
+        }
+            return command_file;
+        }
+
 
         //ループ
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -567,10 +593,10 @@ namespace Robotis_vsido_connect
             if (file != "")
             {
 
-                motion_thread = new Thread(FileAnalyze);
+                motion_thread = new Thread(() => FileAnalyze(defaultm));
                 motion_thread.IsBackground = true;
                 motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-                motion_thread.Start(file);
+                motion_thread.Start();
             }
         }
 
@@ -583,10 +609,10 @@ namespace Robotis_vsido_connect
                 return;
             }
             string file = fullpath;
-            motion_thread = new Thread(FileAnalyze);
+            motion_thread = new Thread(() => FileAnalyze(readfile(file)));
             motion_thread.IsBackground = true;
             motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-            motion_thread.Start(file);
+            motion_thread.Start();
         }
         //wifiのラジオボタン
         private void wifibutton_click(object sender, EventArgs e)
@@ -613,10 +639,10 @@ namespace Robotis_vsido_connect
             danceflag = true;
             PlaySound("Rob_music2.wav");
             string file = dancefile;
-            motion_thread = new Thread(FileAnalyze);
+            motion_thread = new Thread(() => FileAnalyze(dancem));
             motion_thread.IsBackground = true;
             motion_thread.Priority = System.Threading.ThreadPriority.Normal;
-            motion_thread.Start(file);
+            motion_thread.Start();
         }
 
 
@@ -729,6 +755,10 @@ namespace Robotis_vsido_connect
             }
         }
 
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }
